@@ -18,12 +18,12 @@ for iter = 1:num_iters
     %
 
 
+    tmp = zeros(size(X,2),1);
+    for num_feature = 1:size(X,2)
+      tmp(num_feature) = theta(num_feature) - alpha / m * sum( (X * theta - y).*X(:,num_feature) );
+    end
 
-
-
-
-
-
+    theta = tmp;
 
 
 

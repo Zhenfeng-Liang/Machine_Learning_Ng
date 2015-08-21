@@ -37,8 +37,17 @@ grad = zeros(size(theta));
 %
 
 
+h_theta_vec = sigmoid(X * theta);
+
+J = sum( -y .* log(h_theta_vec) - (1 - y) .* log(1 - h_theta_vec) ) / m;
 
 
+grad = X' * (h_theta_vec - y) / m;
+
+temp = theta;
+temp(1) = 0;
+J = J + lambda / (2 * m) * (temp' * temp);
+grad = grad + lambda / m * temp;
 
 
 

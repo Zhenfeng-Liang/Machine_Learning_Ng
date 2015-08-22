@@ -63,17 +63,53 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
+% Part 1
+a1 = [ones(m, 1) X];
+z2 = a1 * Theta1';
+a2 = h1 = [ones(m, 1) sigmoid(z2)];
+z3 = a2 * Theta2';
+a3 = h2 = sigmoid(z3);
+log_h = log(h2);
+log_1_minus_h = log(1 - h2);
+
+
+y_eye = eye(num_labels);
+y_1_minus_eye = 1 - y_eye;
+
+tmp_sum = 0;
+for i = 1:m
+    flag = y(i);
+    tmp_sum = tmp_sum - log_h(i,:) * y_eye(:,flag)  - log_1_minus_h(i,:) * y_1_minus_eye(:,flag);
+end
+
+J = tmp_sum / m;
+
+tmp_theta1 = Theta1;
+tmp_theta2 = Theta2;
+tmp_theta1(:,1) = 0;
+tmp_theta2(:,1) = 0;
+
+regularization_term_cost = lambda / (2 * m) * (sum(sum(tmp_theta1.^2)) + sum(sum(tmp_theta2.^2)));
+J = J + regularization_term_cost;
 
 
 
+% Part 2
+for t = 1:m
+    flag = y(t);
+    delta_3 = a3(t,:)' - y_eye(:,flag);
+    delta_2 = Theta2' * delta_3 .* [0 ; sigmoidGradient(z2(t,:))'];
+    Theta2_grad = Theta2_grad + delta_3 * a2(t, :);
+    Theta1_grad = Theta1_grad + delta_2(2:end) * a1(t, :);
+end
+
+Theta1_grad = Theta1_grad / m;
+Theta2_grad = Theta2_grad / m;
 
 
-
-
-
-
-
-
+% Part 3
+Theta1_grad = Theta1_grad + lambda / m * tmp_theta1;
+Theta2_grad = Theta2_grad + lambda / m * tmp_theta2;
 
 
 
